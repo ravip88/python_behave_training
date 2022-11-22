@@ -1,5 +1,5 @@
 Feature: Validate end to end processing of input files
-  Scenario: validate invalid datatype for EMPLOYEE_ID
+  Scenario: validate incorrect record length
     Given file is placed in source folder for "incorrect record length||"
     When Dev code is executed
     Then file exists in "Error" folder
@@ -36,6 +36,13 @@ Feature: Validate end to end processing of input files
 
   Scenario: validate end to end processing of invalid input file
     Given file is placed in source folder for "invalid datatype|LAST_NAME|str"
+    When Dev code is executed
+    Then file exists in "Error" folder
+    And "Source" folder is empty
+    And "Target" folder is empty
+
+  Scenario: validate end to end processing of invalid input file
+    Given file is placed in source folder for "invalid datatype|SALARY|int"
     When Dev code is executed
     Then file exists in "Error" folder
     And "Source" folder is empty
