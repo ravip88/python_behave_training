@@ -47,6 +47,7 @@ def step_impl(context, scenario_param):
         x.write(context.input_data)
         x.close()
         err_record = records.pop(index)
+        err_records.append(err_record)
     elif scenario == 'incorrect record length':
         fields.append('abc')
         records[index] = ','.join(fields)
@@ -56,24 +57,14 @@ def step_impl(context, scenario_param):
         x.write(context.input_data)
         x.close()
         err_record = records.pop(index)
+        err_records.append(err_record)
     else:
         x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
         x.write(context.input_data)
         x.close()
 
-        # err_records = records.pop(index)
-
-
-    context.input_data_invalid = err_records.append(err_record)
+    context.input_data_invalid = err_records
     context.input_data_valid = '\n'.join(records)
-
-    # a = open(os.getcwd() + '/Execution/valid_employees.csv', 'w')
-    # a.write(context.input_data_valid)
-    # a.close()
-    # b = open(os.getcwd() + '/Execution/error_employees.csv', 'w')
-    # b.write(context.input_data_valid)
-    # b.close()
-
     assert 'employees.csv' in os.listdir(os.getcwd() + '/file_transfer/Source/')
 
 
@@ -117,14 +108,10 @@ def step_impl(context, data_type, folder_name):
             assert False
     else:
         x = open(context.error_path + 'employees.csv').read()
-        try:
-            if x.split('\n')[1] == context.input_data_invalid:
-                assert True
-            else:
-                assert False
-        except:
+        if x.split('\n') == context.input_data_invalid:
             assert True
-
+        else:
+            assert False
 
 @Given('ghi')
 def step_impl(context):
