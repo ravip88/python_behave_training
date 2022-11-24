@@ -1,0 +1,56 @@
+Requirements:
+
+Data file to be placed in Source folder
+File and data validations to be performed before processing data to target table
+if all validations passed, move file to Target folder
+else move data file to Error folder
+
+validations: column count, datatype checks
+
+number of columns expected =11
+-----------------------------------------------------Testing-----------------------------------------------------
+
+TC_001:
+Scenario: Validate data file processing for incorrect record length
+Step 1: Create Data file for incorrect record length
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if data file is moved to error folder
+Step 5: Source folder should be empty
+Step 6: Target folder should be empty
+
+TC_002:
+Scenario: Validate data file processing for invalid data type: EMPLOYEE_ID
+Step 1: Create Data file for invalid data type: EMPLOYEE_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if data file is moved to error folder
+Step 5: Source folder should be empty
+Step 6: Target folder should be empty
+
+TC_003:
+Scenario: Validate data file processing for invalid data type: FIRST_NAME
+Step 1: Create Data file for invalid data type: FIRST_NAME
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if data file is moved to error folder
+Step 5: Source folder should be empty
+Step 6: Target folder should be empty
+
+TC_004:
+Scenario: Validate data file processing for invalid data type: DEPARTMENT_ID
+Step 1: Create Data file for invalid data type: DEPARTMENT_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if data file is moved to error folder
+Step 5: Source folder should be empty
+Step 6: Target folder should be empty
+
+TC_005:
+Scenario: Validate data file processing for valid data file
+Step 1: copy valid data file from Data folder
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if data file is moved to Target folder
+Step 5: Source folder should be empty
+Step 6: Error folder should be empty

@@ -30,6 +30,9 @@ def step_impl(context, scenario_param):
     records = context.input_data.split('\n')
     index = random.randint(1, len(records))
     fields = records[index].split(',')
+    err_records = list()
+    err_records.append(records[0])
+    err_record = ''
     if scenario == 'invalid datatype':
         if fieldname in ['EMPLOYEE_ID', 'SALARY', 'MANAGER_ID', 'DEPARTMENT_ID']:
             if datatype == 'int':
@@ -39,21 +42,44 @@ def step_impl(context, scenario_param):
             if datatype == 'str':
                 fields[config[fieldname]] = '1234'
                 records[index] = ','.join(fields)
+        context.input_data = '\n'.join(records)
+        x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
+        x.write(context.input_data)
+        x.close()
+        err_record = records.pop(index)
     elif scenario == 'incorrect record length':
         fields.append('abc')
         records[index] = ','.join(fields)
+        context.input_data = '\n'.join(records)
 
-    context.input_data = '\n'.join(records)
-    x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
-    x.write(context.input_data)
-    x.close()
+        x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
+        x.write(context.input_data)
+        x.close()
+        err_record = records.pop(index)
+    else:
+        x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
+        x.write(context.input_data)
+        x.close()
+
+        # err_records = records.pop(index)
+
+
+    context.input_data_invalid = err_records.append(err_record)
+    context.input_data_valid = '\n'.join(records)
+
+    # a = open(os.getcwd() + '/Execution/valid_employees.csv', 'w')
+    # a.write(context.input_data_valid)
+    # a.close()
+    # b = open(os.getcwd() + '/Execution/error_employees.csv', 'w')
+    # b.write(context.input_data_valid)
+    # b.close()
 
     assert 'employees.csv' in os.listdir(os.getcwd() + '/file_transfer/Source/')
 
 
 @When('Dev code is executed')
 def step_impl(context):
-    os.system('python code1.py')
+    os.system('python code2.py')
 
 
 @Then('file is moved to target folder')
@@ -79,6 +105,25 @@ def step_impl(context):
 @Then('data is correct and matching with the input file')
 def step_impl(context):
     assert context.input_data == open(os.getcwd() + '/file_transfer/target/employees.csv').read()
+
+
+@Then('Validate if "{data_type}" data is moved to "{folder_name}" folder')
+def step_impl(context, data_type, folder_name):
+    if data_type == 'valid':
+        x = open(context.target_path + 'employees.csv').read()
+        if x == context.input_data_valid:
+            assert True
+        else:
+            assert False
+    else:
+        x = open(context.error_path + 'employees.csv').read()
+        try:
+            if x.split('\n')[1] == context.input_data_invalid:
+                assert True
+            else:
+                assert False
+        except:
+            assert True
 
 
 @Given('ghi')
