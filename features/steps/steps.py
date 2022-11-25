@@ -58,6 +58,26 @@ def step_impl(context, scenario_param):
         x.close()
         err_record = records.pop(index)
         err_records.append(err_record)
+    elif scenario == 'null check':
+        fields[config[fieldname]] = ''
+        records[index] = ','.join(fields)
+        context.input_data = '\n'.join(records)
+        x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
+        x.write(context.input_data)
+        x.close()
+        err_record = records.pop(index)
+        err_records.append(err_record)
+
+    elif scenario == 'duplicate':
+        records.append(records[index])
+        x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
+        context.input_data = '\n'.join(records)
+        x.write(context.input_data)
+        x.close()
+        err_records = records
+        records = list()
+        records.append(err_records[0])
+
     else:
         x = open(os.getcwd() + '/file_transfer/Source/employees.csv', 'w')
         x.write(context.input_data)
@@ -112,6 +132,7 @@ def step_impl(context, data_type, folder_name):
             assert True
         else:
             assert False
+
 
 @Given('ghi')
 def step_impl(context):

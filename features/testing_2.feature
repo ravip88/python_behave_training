@@ -47,3 +47,16 @@ Feature: Validate end to end processing of input files
     Then Validate if "invalid" data is moved to "error" folder
     And Validate if "valid" data is moved to "Target" folder
 
+  Scenario: validate null check for EMPLOYEE_ID
+    Given file is placed in source folder for "null check|EMPLOYEE_ID|int"
+    When Dev code is executed
+    Then Validate if "invalid" data is moved to "error" folder
+    And Validate if "valid" data is moved to "Target" folder
+
+
+  Scenario: validate duplicate records
+    Given file is placed in source folder for "duplicate||"
+    When Dev code is executed
+    Then Validate if "invalid" data is moved to "error" folder
+    And Validate if "valid" data is moved to "Target" folder
+

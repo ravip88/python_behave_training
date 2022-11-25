@@ -5,6 +5,7 @@ import json
 filename = os.listdir(os.getcwd() + '/file_transfer/Source/')[0]
 source = os.getcwd() + '/file_transfer/Source/'
 target = os.getcwd() + '/file_transfer/Target/'
+validation = os.getcwd() + '/file_transfer/Validation/'
 error_path = os.getcwd() + '/file_transfer/Error/'
 
 
@@ -26,7 +27,7 @@ def validate_data(data, config):
         c = False
         print('file validation failure for duplicate records')
         # val_records=records[0]
-        inval_records=records
+        inval_records = records
         return val_records, inval_records
 
     for x in range(1, len(records)):
@@ -38,7 +39,7 @@ def validate_data(data, config):
             inval_records.append(records[x])
             continue
 
-        if str(a[config['EMPLOYEE_ID']['index']])=='':
+        if str(a[config['EMPLOYEE_ID']['index']]) == '':
             c = False
             print('file validation failure for null key value at: ' + str(x + 1))
             inval_records.append(records[x])
@@ -74,14 +75,33 @@ def validate_data(data, config):
     return val_records, inval_records
 
 
+def transform_data(data, config):
+    data[0] = data[0] + ",PACKAGE"
+    for x in range(1, len(data)):
+        record = data[x].split(',')
+        package=int(record[config['SALARY']['index']])*12
+        record.append(str(package))
+        record[config['PHONE_NUMBER']['index']]=record[config['PHONE_NUMBER']['index']].replace('.', '')
+        data[x]=','.join(record)
+    return data
+
+# reading data from source file
 data = open(source + filename).read()
+# reading configuration file
 config = json.loads(open(os.getcwd() + '/Config_2.json').read())
+# perform validations on source data
 val_records, inval_records = validate_data(data, config)
-# print(val_records)
-# print(inval_records)
-x=open(target+filename, 'w')
+x = open(validation + filename, 'w')
 x.write('\n'.join(val_records))
 x.close()
-y=open(error_path+filename, 'w')
+y = open(error_path + filename, 'w')
 y.write('\n'.join(inval_records))
 y.close()
+# perform transformations on valid records
+processed_data=transform_data(val_records, config)
+
+
+z = open(target + filename, 'w')
+z.write('\n'.join(processed_data))
+z.close()
+
