@@ -1,0 +1,76 @@
+Requirements:
+
+Data file to be placed in Source folder
+File and data validations to be performed before processing data to validation folder
+Filter valid and invalid records
+Create a file containing valid records to validation folder
+Perform transformations on input data
+Create a file containing valid transformed records to Target folder
+Create a file containing invalid records to Error folder, if any
+
+validations: column count, datatype check, null validation, duplicate check(reject the file)
+Transformations:
+1. Package= 12*SALARY
+2. PHONE_NUMBER(650.507.9833) format to 6505079833
+3. HIRE_DATE(21-JUN-07) format to DD-MM-YYYY
+
+key column: EMPLOYEE_ID
+number of columns expected =11
+-----------------------------------------------------Testing-----------------------------------------------------
+
+TC_001:
+Scenario: Validate data file processing for incorrect record length
+Step 1: Create Data file for incorrect record length
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+
+TC_002:
+Scenario: Validate data file processing for invalid data type: EMPLOYEE_ID
+Step 1: Create Data file for invalid data type: EMPLOYEE_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+TC_003:
+Scenario: Validate data file processing for invalid data type: FIRST_NAME
+Step 1: Create Data file for invalid data type: FIRST_NAME
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+TC_004:
+Scenario: Validate data file processing for invalid data type: DEPARTMENT_ID
+Step 1: Create Data file for invalid data type: DEPARTMENT_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+TC_005:
+Scenario: Validate data file processing for valid data file
+Step 1: copy valid data file from Data folder
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+TC_006:
+Scenario: Validate data file processing for null: EMPLOYEE_ID
+Step 1: Create Data file for invalid data type: DEPARTMENT_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder
+
+TC_007:
+Scenario: Validate data file processing for duplicate record: EMPLOYEE_ID
+Step 1: Create Data file for invalid data type: DEPARTMENT_ID
+Step 2: Place data file created in Step 1 to Source folder
+Step 3: Execute dev code
+Step 4: Validate if invalid data is moved to error folder
+Step 5: Validate if valid data is moved to Target folder

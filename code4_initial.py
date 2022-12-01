@@ -77,7 +77,9 @@ def validate_data(data, config):
 
 
 def transform_data(data, config):
-    data[0] = data[0] + ",PACKAGE"
+    data[0] = data[0] + ",PACKAGE,START_DATE,END_DATE,CURENT_FLAG"
+    start_date=datetime.now().strftime('%d-%m-%Y %f')
+    end_date=datetime.strptime('31-12-9999', '%d-%m-%Y').strftime('%d-%m-%Y %f')
     for x in range(1, len(data)):
         record = data[x].split(',')
         package = int(record[config['SALARY']['index']]) * 12
@@ -85,6 +87,9 @@ def transform_data(data, config):
         record[config['PHONE_NUMBER']['index']] = record[config['PHONE_NUMBER']['index']].replace('.', '')
         record[config['HIRE_DATE']['index']] = datetime.strptime(record[config['HIRE_DATE']['index']],
                                                                  '%d-%b-%y').strftime('%d-%m-%Y')
+        record.append(start_date)
+        record.append(end_date)
+        record.append('Y')
         data[x] = ','.join(record)
     return data
 
