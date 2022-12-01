@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import time
 from datetime import datetime
 
 filename = os.listdir(os.getcwd() + '/file_transfer/Source/')[0]
@@ -79,6 +80,11 @@ def validate_data(data, config):
 def transform_data(data, config):
     data[0] = data[0] + ",PACKAGE,START_DATE,END_DATE,CURENT_FLAG"
     start_date=datetime.now().strftime('%d-%m-%Y %f')
+    time.sleep(2)
+    a=open(os.getcwd()+'/file_transfer/initial.txt', 'w')
+    # start_date1 = datetime.now().strftime('%d-%m-%Y %f')
+    a.write(start_date)
+    a.close()
     end_date=datetime.strptime('31-12-9999', '%d-%m-%Y').strftime('%d-%m-%Y %f')
     for x in range(1, len(data)):
         record = data[x].split(',')

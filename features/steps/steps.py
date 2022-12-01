@@ -10,7 +10,7 @@ from datetime import datetime
 
 @Given('file is placed in source folder for "{scenario_param}"')
 def step_impl(context, scenario_param):
-    time.sleep(10)
+    time.sleep(4)
     scenario, fieldname, datatype = scenario_param.split('|')[0], scenario_param.split('|')[1], \
                                     scenario_param.split('|')[2]
     context.source_path = os.getcwd() + '/file_transfer/Source/'
@@ -107,6 +107,10 @@ def step_impl(context):
 def step_impl(context):
     os.system('python code3.py')
 
+@When('Dev4_initial code is executed')
+def step_impl(context):
+    os.system('python code4_initial.py')
+
 
 @Then('file is moved to target folder')
 def step_impl(context):
@@ -153,13 +157,14 @@ def step_impl(context, data_type, folder_name):
 def step_impl(context, folder_name):
     validation_data = open(context.validation + 'employees.csv').read().split('\n')
     target_data = open(context.target_path + 'employees.csv').read().split('\n')
+    initial = open(os.getcwd() + '/file_transfer/initial.txt').read()
     if len(validation_data) != len(target_data):
         assert False
     else:
         for x in range(1, len(validation_data)):
             validation_fields = validation_data[x].split(',')
             target_fields = target_data[x].split(',')
-            if int(target_fields[-1]) != int(validation_fields[context.Config['SALARY']]) * 12:
+            if int(target_fields[11]) != int(validation_fields[context.Config['SALARY']]) * 12:
                 assert False
             elif target_fields[context.Config['PHONE_NUMBER']] != validation_fields[
                 context.Config['PHONE_NUMBER']].replace('.', ''):
@@ -169,6 +174,12 @@ def step_impl(context, folder_name):
                                                                                                   'HIRE_DATE']],
                                                                                           '%d-%b-%y').strftime(
                 '%d-%m-%Y'):
+                assert False
+            elif target_fields[12] != initial:
+                assert False
+            elif target_fields[13] != datetime.strptime('31-12-9999', '%d-%m-%Y').strftime('%d-%m-%Y %f'):
+                assert False
+            elif target_fields[14] != 'Y':
                 assert False
 
     assert True
