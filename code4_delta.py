@@ -1,0 +1,193 @@
+import os
+import shutil
+import json
+import time
+from datetime import datetime
+
+filename = os.listdir(os.getcwd() + '/file_transfer/Source/')[0]
+source = os.getcwd() + '/file_transfer/Source/'
+target = os.getcwd() + '/file_transfer/Target/'
+validation = os.getcwd() + '/file_transfer/Validation/'
+error_path = os.getcwd() + '/file_transfer/Error/'
+
+
+def file_transfer(source, target, filename):
+    shutil.move(source + filename, target)
+
+
+def validate_data(data, config):
+    records = data.split('\n')
+    fields = list(config.keys())
+    c = bool()
+    d = int()
+    val_records = list()
+    inval_records = list()
+    inval_records.append(records[0])
+    val_records.append(records[0])
+    # duplicate check
+    if len(set(records)) != len(records):
+        c = False
+        print('file validation failure for duplicate records')
+        # val_records=records[0]
+        inval_records = records
+        return val_records, inval_records
+
+    for x in range(1, len(records)):
+        # validation for EMPLOYEE_ID column datatype
+        a = records[x].split(',')
+        if len(a) != len(fields):
+            c = False
+            print('file validation failure for number of columns at: ' + str(x + 1))
+            inval_records.append(records[x])
+            continue
+
+        if str(a[config['EMPLOYEE_ID']['index']]) == '':
+            c = False
+            print('file validation failure for null key value at: ' + str(x + 1))
+            inval_records.append(records[x])
+            continue
+        # data type validations
+        for y in fields:
+            if config[y]["dtype"] == "int":
+                try:
+                    # print()
+                    b = int(a[config[y]["index"]])
+                    c = True
+                    continue
+                except:
+                    c = False
+                    print('file validation failure for invalid datatype ' + y + ' column at: ' + str(x + 1))
+                    break
+
+            elif config[y]["dtype"] == "str":
+                # validation for FIRST_NAME column datatype
+                try:
+                    b = int(a[config[y]["index"]])
+                    c = False
+                    print('file validation failure for invalid datatype ' + y + ' column at: ' + str(x + 1))
+                    break
+                except:
+                    c = True
+                    continue
+        if c:
+            val_records.append(records[x])
+        else:
+            inval_records.append(records[x])
+
+    return val_records, inval_records
+
+
+def transform_data(data, config):
+    start_date = datetime.now().strftime('%d-%m-%Y %f')
+    time.sleep(2)
+    a = open(os.getcwd() + '/file_transfer/delta.txt', 'w')
+    a.write(start_date)
+    a.close()
+    end_date = datetime.strptime('31-12-9999', '%d-%m-%Y').strftime('%d-%m-%Y %f')
+    input_key_list = list()
+    target_key_list = list()
+    for x in range(1, len(data)):
+        record = data[x].split(',')
+        input_key_list.append(record[0])
+        package = int(record[config['SALARY']['index']]) * 12
+        record.append(str(package))
+        record[config['PHONE_NUMBER']['index']] = record[config['PHONE_NUMBER']['index']].replace('.', '')
+        record[config['HIRE_DATE']['index']] = datetime.strptime(record[config['HIRE_DATE']['index']],
+                                                                 '%d-%b-%y').strftime('%d-%m-%Y')
+        data[x] = ','.join(record)
+
+    initial_data_list = open(target + filename).read().split('\n')
+
+    for x in range(1, len(initial_data_list)):
+        record = initial_data_list[x].split(',')
+        target_key_list.append(record[0])
+    # identify new records
+    new_rec_key = set(input_key_list).difference(set(target_key_list))
+    # indentify update records
+    update_rec_key = set(input_key_list).intersection(set(target_key_list))
+    # identify delete d=records
+    del_rec_key = set(target_key_list).difference(set(input_key_list))
+
+    for x in range(1, len(data)):
+        record = data[x].split(',')
+        if record[0] in new_rec_key:
+            record.append(start_date)
+            record.append(end_date)
+            record.append('Y')
+            initial_data_list.append(','.join(record))
+        elif record[0] in update_rec_key:
+            for y in range(1, len(initial_data_list)):
+                z = initial_data_list[y].split(',')
+                if record[0] == z[0] and z[:-3] != record and z[-1] == 'Y':
+                    record.append(start_date)
+                    record.append(end_date)
+                    record.append('Y')
+                    initial_data_list.append(','.join(record))
+                    z[-2] = start_date
+                    z[-1] = 'N'
+                    initial_data_list[y] = ','.join(z)
+    for x in range(1, len(initial_data_list)):
+        z = initial_data_list[x].split(',')
+
+        if z[0] in del_rec_key and z[-1] == 'Y' and z[-2]==end_date:
+            z[-2] = start_date
+            initial_data_list[x] = ','.join(z)
+
+        # print(record)
+        # for y in range(1, len(initial_data_list)):
+        #     initial_record = initial_data_list[y].split(',')
+        #     # print(initial_record)
+        #     #
+        #     # print(record[0])
+        #     if record[0] == initial_record[0]:
+        #         flag = True
+        #         for z in range(len(record)):
+        #             # print(record[z], initial_record[z])
+        #             if record[z] != initial_record[z]:
+        #                 # print(record)
+        #                 # print(False)
+        #                 flag = False
+        #                 data.append(data[x])
+        #                 print(data[x])
+        #                 record_new = data[-1].split(',')
+        #                 print(len(record_new))
+        #                 record_new.append(start_date)
+        #                 record_new.append(end_date)
+        #                 record_new.append('Y')
+        #                 initial_record[13] = start_date
+        #                 initial_record[14] = 'N'
+        #                 data[x] = ','.join(initial_record)
+        #                 data[-1] = ','.join(record_new)
+        #                 break
+        #             else:
+        #                 # print(record)
+        #                 flag = True
+        #                 data[x] = ','.join(initial_record)
+        #                 # record=initial_record
+        #                 # data[x] = ','.join(record)
+        #                 continue
+        #             print(flag)
+
+    initial_data_list[0] = data[0] + ",PACKAGE,START_DATE,END_DATE,CURENT_FLAG"
+    print(initial_data_list)
+    return initial_data_list
+
+
+# reading data from source file
+data = open(source + filename).read()
+# reading configuration file
+config = json.loads(open(os.getcwd() + '/Config_2.json').read())
+# perform validations on source data
+val_records, inval_records = validate_data(data, config)
+x = open(validation + filename, 'w')
+x.write('\n'.join(val_records))
+x.close()
+y = open(error_path + filename, 'w')
+y.write('\n'.join(inval_records))
+y.close()
+# perform transformations on valid records
+processed_data = transform_data(val_records, config)
+
+z = open(target + filename, 'w')
+z.write('\n'.join(processed_data))
+z.close()
