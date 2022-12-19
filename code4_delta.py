@@ -4,11 +4,14 @@ import json
 import time
 from datetime import datetime
 
+import pandas as pd
+
 filename = os.listdir(os.getcwd() + '/file_transfer/Source/')[0]
 source = os.getcwd() + '/file_transfer/Source/'
 target = os.getcwd() + '/file_transfer/Target/'
 validation = os.getcwd() + '/file_transfer/Validation/'
 error_path = os.getcwd() + '/file_transfer/Error/'
+processed = os.getcwd() + '/file_transfer/Processed/'
 
 
 def file_transfer(source, target, filename):
@@ -169,8 +172,19 @@ def transform_data(data, config):
         #             print(flag)
 
     initial_data_list[0] = data[0] + ",PACKAGE,START_DATE,END_DATE,CURENT_FLAG"
-    print(initial_data_list)
+    # print(initial_data_list)
     return initial_data_list
+
+def process_data():
+    df=pd.read_csv(target+'employees.csv')
+    df_active=df[df['END_DATE']=='31-12-9999 000000']
+    df_inactive=df[(df['END_DATE']!='31-12-9999 000000') & (df['CURENT_FLAG']=='Y')]
+    out=dict()
+    out['active_employees']=json.loads(df_active.to_json(orient='records'))
+    out['inactive_employees'] = json.loads(df_inactive.to_json(orient='records'))
+    file=open(processed+'employees.json', 'w')
+    file.write(json.dumps(out, indent=2))
+    file.close()
 
 
 # reading data from source file
@@ -191,3 +205,4 @@ processed_data = transform_data(val_records, config)
 z = open(target + filename, 'w')
 z.write('\n'.join(processed_data))
 z.close()
+process_data()

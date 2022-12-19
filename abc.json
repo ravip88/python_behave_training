@@ -1,0 +1,36 @@
+[
+  {
+    "EMPLOYEE_ID": 206,
+    "FIRST_NAME": "William",
+    "LAST_NAME": "Gietz",
+    "EMAIL": "WGIETZ",
+    "PHONE_NUMBER": "5151238181",
+    "HIRE_DATE": "07-06-2002",
+    "JOB_ID": "AC_ACCOUNT",
+    "SALARY": 8300,
+    "COMMISSION_PCT": " - ",
+    "MANAGER_ID": 205,
+    "DEPARTMENT_ID": 110,
+    "PACKAGE": 99600,
+    "START_DATE": "19-12-2022 863595",
+    "END_DATE": "19-12-2022 493117",
+    "CURENT_FLAG": "Y"
+  },
+  {
+    "EMPLOYEE_ID": 333,
+    "FIRST_NAME": "Steven",
+    "LAST_NAME": "Markle",
+    "EMAIL": "SMARKLE",
+    "PHONE_NUMBER": "6501241434",
+    "HIRE_DATE": "08-03-2008",
+    "JOB_ID": "ST_CLERK",
+    "SALARY": 2200,
+    "COMMISSION_PCT": " - ",
+    "MANAGER_ID": 120,
+    "DEPARTMENT_ID": 50,
+    "PACKAGE": 26400,
+    "START_DATE": "19-12-2022 642823",
+    "END_DATE": "19-12-2022 848657",
+    "CURENT_FLAG": "Y"
+  }
+]
